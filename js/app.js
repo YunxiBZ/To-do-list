@@ -4,75 +4,93 @@
 const app = {
 
   todo : document.getElementById('todo'),
+  lists : [
+    "Faire une to do list en JS", 
+    "Faire une to do list en React",
+    'Coder Facebook '
+  ],
+
   init: () => {
-    app.drawList();
+
+    app.drawPage();
+    app.addListenerToAction();
 
   },
 
-  drawList : () => {
+  addListenerToAction: ()=>{
+    
+    const form = document.querySelector('form');
+    form.addEventListener('submit', app.handleAddList);
+
+  },
+
+  handleAddList: (event) => {
+
+    event.preventDefault();
+    const form = event.target;
+    const value = form.querySelector('#inputWindow').value
+    app.lists.push(value);
+
+    //rewrite the lists
+    let ul = document.querySelector('ul');
+    while (ul.firstChild) {
+      ul.removeChild(ul.firstChild);
+    }
+    app.writeLists();
+  },
+
+  drawPage : () => {
     //prepare elements
     const form = document.createElement('form');
 
     const input = document.createElement('input');
     input.setAttribute('placeholder','Ajouter une tâche');
     input.setAttribute('id', 'inputWindow');
-
+    input.setAttribute('type', 'text');
+    input.setAttribute('name', 'inputlist');
+    input.setAttribute('value', '');
 
     const p = document.createElement('p');
     p.textContent= '2 tâches en cours'
 
     const ul = document.createElement('ul');
 
-    const li = document.createElement('li');
-    li.classList.add('done');
-
-    const checkbox = document.createElement('input');
-    checkbox.setAttribute('type', 'checkbox');
-    checkbox.setAttribute('id', 'checkbox');
-    checkbox.setAttribute('name', 'checkbox');
-    const label = document.createElement('label');
-    label.setAttribute('for', 'checkbox')
-    label.textContent = 'Faire une to do list en JS ';
-
-
-    const li2 = document.createElement('li');
-    //li2.classList.add('done');
-
-    const checkbox2 = document.createElement('input');
-    checkbox2.setAttribute('type', 'checkbox');
-    checkbox2.setAttribute('id', 'checkbox2');
-    checkbox2.setAttribute('name', 'checkbox2');
-    const label2 = document.createElement('label');
-    label2.setAttribute('for', 'checkbox2')
-    label2.textContent = 'Faire une to do list en React';
-
-
-    const li3 = document.createElement('li');
-    //li3.classList.add('done');
-
-    const checkbox3 = document.createElement('input');
-    checkbox3.setAttribute('type', 'checkbox');
-    checkbox3.setAttribute('id', 'checkbox');
-    checkbox3.setAttribute('name', 'checkbox');
-    const label3 = document.createElement('label');
-    label3.setAttribute('for', 'checkbox')
-    label3.textContent = 'Coder Facebook ';
-
     //put elements in DOM
-    todo.appendChild(form);
+    app.todo.appendChild(form);
     form.appendChild(input);
     form.appendChild(p);
     form.appendChild(ul);
-    ul.appendChild(li);
-    li.appendChild(checkbox);
-    li.appendChild(label);
-    ul.appendChild(li2);
-    li2.appendChild(checkbox2);
-    li2.appendChild(label2);
-    ul.appendChild(li3);
-    li3.appendChild(checkbox3);
-    li3.appendChild(label3);
+    
+    app.writeLists()
+    
+  },
+  
+  writeLists : () => {
 
+    app.lists.forEach((list, index) => {
+      let ul = document.querySelector('ul')
+      const li = document.createElement('li');
+      ul.appendChild(li);
+      //li.classList.add('done');
+      const checkbox = document.createElement('input');
+      checkbox.setAttribute('type', 'checkbox');
+      checkbox.setAttribute('id', `checkbox${index + 1}`);
+      checkbox.setAttribute('name', `checkbox${index + 1}`);
+      checkbox.addEventListener('click', app.handleClassList);
+      const label = document.createElement('label');
+      label.setAttribute('for', `checkbox${index + 1}`)
+      label.textContent = list;
+      li.appendChild(checkbox);
+      li.appendChild(label);
+      
+    })
+
+  },
+
+  handleClassList: (event) => {
+    const li = event.target.closest('li')
+    console.log(li)
+    li.classList.toggle('done');
   }
 };
 
